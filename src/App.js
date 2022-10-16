@@ -1,11 +1,12 @@
 import { Route, Routes } from "react-router-dom";
 
 import CamerasPage from "./modules/admin/pages/CamerasPage";
+import LocalHeadlinesPage from "./modules/admin/pages/LocalHeadlinesPage";
 import Main from "./modules/main/Main";
 import NavBar from "./modules/admin/NavBar";
 import NewsPage from "./modules/admin/pages/NewsPage";
 import SignIn from "./modules/admin/auth/SignIn";
-import VideoPage from "./modules/admin/pages/VideoPage";
+import SportsPage from "./modules/admin/pages/SportsPage";
 import WeatherPage from "./modules/admin/pages/WeatherPage";
 
 function App() {
@@ -16,9 +17,10 @@ function App() {
         <Route path="/admin" element={<SignIn />} />
         <Route path="/admin" element={<NavBar />}>
           <Route path="weather" element={<WeatherPage />} />
+          <Route path="localheadlines" element={<LocalHeadlinesPage />} />
           <Route path="news" element={<NewsPage />} />
           <Route path="cameras" element={<CamerasPage />} />
-          <Route path="video" element={<VideoPage />} />
+          <Route path="sports" element={<SportsPage />} />
         </Route>
       </Routes>
     </div>

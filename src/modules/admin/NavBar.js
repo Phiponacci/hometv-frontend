@@ -10,9 +10,9 @@ import Container from "@mui/material/Container";
 import { Link } from "react-router-dom";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
-import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import { Outlet } from "react-router-dom";
 import Paper from "@mui/material/Paper";
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import VideocamIcon from "@mui/icons-material/Videocam";
@@ -25,7 +25,7 @@ const NavBar = () => {
       <AppBar position="sticky" >
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <Avatar src="/logo.png" />
+            <Avatar src="/logo.png" sx={{mr: 1}} variant="rounded"/>
             <Typography
               variant="h6"
               noWrap
@@ -37,6 +37,7 @@ const NavBar = () => {
                 color: "inherit",
                 textDecoration: "none",
               }}
+              target="_blank"
             >
               HOME TV
             </Typography>
@@ -60,6 +61,12 @@ const NavBar = () => {
                     to="/admin/weather"
                   />
                   <BottomNavigationAction
+                    label="Local Headlines"
+                    icon={<NewspaperIcon />}
+                    component={Link}
+                    to="/admin/localheadlines"
+                  />
+                  <BottomNavigationAction
                     label="News"
                     icon={<NewspaperIcon />}
                     component={Link}
@@ -72,10 +79,10 @@ const NavBar = () => {
                     to="/admin/cameras"
                   />
                   <BottomNavigationAction
-                    label="Video"
-                    icon={<OndemandVideoIcon />}
+                    label="Sports"
+                    icon={<SportsSoccerIcon />}
                     component={Link}
-                    to="/admin/video"
+                    to="/admin/sports"
                   />
                 </BottomNavigation>
               </Paper>
@@ -112,6 +119,15 @@ const NavBar = () => {
                 startIcon={<NewspaperIcon />}
                 sx={{ m: 2, color: "white" }}
                 component={Link}
+                to="/admin/localheadlines"
+              >
+                Local Headlines
+              </Button>
+
+              <Button
+                startIcon={<NewspaperIcon />}
+                sx={{ m: 2, color: "white" }}
+                component={Link}
                 to="/admin/news"
               >
                 News
@@ -126,12 +142,12 @@ const NavBar = () => {
                 Cameras
               </Button>
               <Button
-                startIcon={<OndemandVideoIcon />}
+                startIcon={<SportsSoccerIcon />}
                 sx={{ m: 2, color: "white" }}
                 component={Link}
-                to="/admin/video"
+                to="/admin/sports"
               >
-                Video
+                Sports
               </Button>
             </Box>
           </Toolbar>

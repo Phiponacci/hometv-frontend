@@ -16,17 +16,25 @@ function Camera() {
     }, PERIOD);
   };
   React.useEffect(() => {
-    fetch(`${API_BASE_URL}/Camera`)
+    fetch(`${API_BASE_URL}/Camera/active`)
       .then((res) => res.json())
-      .then((cameras) => {
-        setupSlides(cameras);
+      .then((_cameras) => {
+        _cameras.forEach((camera) => {
+          if (camera.isImage) camera.link = `${API_BASE_URL}/${camera.link}`;
+        });
+        setupSlides(_cameras);
       })
-      .catch((error) => console.error("error in camera fetch api"));
+      .catch((error) => alert("ERROR: cannot fetch camera stream!"));
     return () => {};
   }, []);
 
   return (
-    <Card>
+    <Card
+      square
+      sx={{
+        my: 0.5,
+      }}
+    >
       <ImageListItem>
         {url != null && <img alt="" loading="lazy" src={url} />}
       </ImageListItem>

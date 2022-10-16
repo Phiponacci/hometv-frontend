@@ -15,57 +15,59 @@ import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 
-export default function VideoPage() {
-  const [videos, setVideos] = React.useState([]);
+export default function SportsPage() {
+  const [sportLinks, setSportLinks] = React.useState([]);
 
   React.useEffect(() => {
-    fetch(`${API_BASE_URL}/Video`)
+    fetch(`${API_BASE_URL}/SportLink`)
       .then((res) => res.json())
-      .then((_videos) => setVideos(_videos));
+      .then((_sportLinks) => setSportLinks(_sportLinks));
     return () => {};
   }, []);
 
-  const deactivateOtherVideos = (video) => {
-    fetch(`${API_BASE_URL}/Video/${video.id}`, {
+  const toggleSportLink = (sportLink) => {
+    fetch(`${API_BASE_URL}/SportLink/${sportLink.id}`, {
       method: "PUT",
     })
       .then((res) => res.json())
-      .then((_video) => {
-        const _videos = [...videos];
-        _videos.forEach((v) => {
-          v.active = v.id === video.id;
+      .then((_sportLink) => {
+        setSportLinks((_links) => {
+          const index = _links.indexOf(sportLink);
+          const records = [..._links];
+          records[index] = _sportLink;
+          return records;
         });
-        setVideos(_videos);
       });
   };
 
-  const handleAddVideo = (event) => {
+  const handleAddLink = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const video = {
-      link: data.get("link"),
+    const sportLink = {
+      name: data.get("name"),
+      link: data.get("link")
     };
-    fetch(`${API_BASE_URL}/Video`, {
+    fetch(`${API_BASE_URL}/SportLink`, {
       method: "POST",
       headers: {
         Accept: "text/plain",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(video),
+      body: JSON.stringify(sportLink),
     })
       .then((res) => res.json())
-      .then((savedVideo) => setVideos((current) => [savedVideo, ...current]));
+      .then((savedLink) => setSportLinks((current) => [savedLink, ...current]));
   };
 
-  const handleDeleteVideo = (videoId) => {
-    fetch(`${API_BASE_URL}/Video/${videoId}`, {
+  const handleDeleteLink = (sportLinkId) => {
+    fetch(`${API_BASE_URL}/SportLink/${sportLinkId}`, {
       method: "DELETE",
     })
       .then((res) => res.json())
-      .then((deletedVideo) => {
-        setVideos((current) => {
-          return current.filter((video) => video.id !== deletedVideo.id);
-        });
+      .then((deletedLink) => {
+        setSportLinks((current) =>
+          current.filter((sportLink) => sportLink.id !== deletedLink.id)
+        );
       });
   };
 
@@ -81,16 +83,31 @@ export default function VideoPage() {
         <Box
           id="camera-form"
           component="form"
-          onSubmit={handleAddVideo}
+          onSubmit={handleAddLink}
           noValidate
           sx={{ mt: 1 }}
         >
           <TextField
             fullWidth
+            required
+            name="name"
+            id="outlined-basic"
+            label="Name"
+            variant="outlined"
+            sx={{
+              my: 1
+            }}
+          />
+          <TextField
+            fullWidth
+            required
             name="link"
             id="outlined-basic"
-            label="Video link"
+            label="Sport link"
             variant="outlined"
+            sx={{
+              my: 1
+            }}
           />
           <Grid container justifyContent="flex-end" sx={{ my: 2 }}>
             <Button variant="contained" color="success" type="submit">
@@ -101,23 +118,25 @@ export default function VideoPage() {
         <List
           display="flex"
           sx={{ width: "100%", bgcolor: "background.paper" }}
-          subheader={<ListSubheader>Videos</ListSubheader>}
+          subheader={<ListSubheader>Sport Links</ListSubheader>}
         >
-          {videos.map((video) => (
-            <ListItem key={video.id}>
-              <ListItemButton href={video.link} target="_blank">
-                <Tooltip title={video.link}>
-                  <ListItemText primary={video.link.substring(0, 30) + "..."} />
+          {sportLinks.map((sportLink) => (
+            <ListItem key={sportLink.id}>
+              <ListItemButton href={sportLink.link} target="_blank">
+                <Tooltip title={sportLink.link}>
+                  <ListItemText
+                    primary={sportLink.name}
+                  />
                 </Tooltip>
               </ListItemButton>
               <Switch
-                onChange={() => deactivateOtherVideos(video)}
+                onChange={() => toggleSportLink(sportLink)}
                 edge="end"
-                checked={video.active}
+                checked={sportLink.isActive}
               />
               <IconButton
                 sx={{ color: "red" }}
-                onClick={() => handleDeleteVideo(video.id)}
+                onClick={() => handleDeleteLink(sportLink.id)}
               >
                 <DeleteIcon />
               </IconButton>

@@ -18,6 +18,7 @@ import ImageListItem from "@mui/material/ImageListItem";
 import ImageListItemBar from "@mui/material/ImageListItemBar";
 import MuiAlert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
+import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -30,6 +31,19 @@ export default function CamerasPage() {
   const [loading, setLoading] = React.useState(false);
   const [cameras, setCameras] = React.useState([]);
   const [error, setError] = React.useState(false);
+  const [imageAd, setImageAd] = React.useState(false);
+  React.useEffect(() => {
+    fetch(`${API_BASE_URL}/Camera`)
+      .then((res) => res.json())
+      .then((_cameras) => {
+        _cameras.forEach((camera) => {
+          if (camera.isImage) camera.link = `${API_BASE_URL}/${camera.link}`;
+        });
+        setCameras(_cameras);
+      })
+      .catch((error) => setError(true));
+    return () => {};
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -38,16 +52,6 @@ export default function CamerasPage() {
   const handleClose = () => {
     setOpen(false);
   };
-
-  React.useEffect(() => {
-    fetch(`${API_BASE_URL}/Camera`)
-      .then((res) => res.json())
-      .then((cameras) => {
-        setCameras(cameras);
-      })
-      .catch((error) => setError(true));
-    return () => {};
-  }, []);
 
   const handleDeleteCamera = (cameraId) => {
     fetch(`${API_BASE_URL}/Camera/${cameraId}`, {
@@ -61,29 +65,68 @@ export default function CamerasPage() {
       });
   };
 
+  const toggleCamera = (_record) => {
+    fetch(`${API_BASE_URL}/Camera/${_record.id}`, {
+      method: "PUT",
+    })
+      .then((res) => res.json())
+      .then((record) => {
+        setCameras((_news) => {
+          const index = _news.indexOf(_record);
+          if (_record.isImage) {
+            record.link = `${API_BASE_URL}/${record.link}`;
+          }
+          const records = [..._news];
+          records[index] = record;
+          return records;
+        });
+      });
+  };
+
   const handleAddCamera = (event) => {
     event.preventDefault();
     setLoading(true);
     const data = new FormData(event.currentTarget);
-    const camera = {
-      name: data.get("name"),
-      link: data.get("link"),
-    };
-    fetch(`${API_BASE_URL}/Camera`, {
-      method: "POST",
-      headers: {
-        Accept: "text/plain",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(camera),
-    })
-      .then((res) => res.json())
-      .then((savedCamera) => {
-        setCameras((current) => [...current, savedCamera]);
-        setLoading(false);
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 5000);
-      });
+    if (imageAd) {
+      const url = `${API_BASE_URL}/Camera/add_image`;
+      const imgAd = new FormData();
+      imgAd.append("file", data.get("file"));
+      imgAd.append("name", data.get("name"));
+
+      fetch(url, {
+        method: "POST",
+        body: imgAd,
+      })
+        .then((res) => res.json())
+        .then((savedImageAd) => {
+          savedImageAd.link = `${API_BASE_URL}/${savedImageAd.link}`;
+          setCameras((current) => [...current, savedImageAd]);
+          setLoading(false);
+          setSuccess(true);
+          setTimeout(() => setSuccess(false), 5000);
+        });
+    } else {
+      const url = `${API_BASE_URL}/Camera/add_link`;
+      const record = {
+        name: data.get("name"),
+        link: data.get("link"),
+      };
+      fetch(url, {
+        method: "POST",
+        headers: {
+          Accept: "text/plain",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(record),
+      })
+        .then((res) => res.json())
+        .then((savedCamera) => {
+          setCameras((current) => [...current, savedCamera]);
+          setLoading(false);
+          setSuccess(true);
+          setTimeout(() => setSuccess(false), 5000);
+        });
+    }
     setOpen(false);
   };
   return (
@@ -98,6 +141,7 @@ export default function CamerasPage() {
               alt={item.name}
               loading="lazy"
             />
+
             <ImageListItemBar
               sx={{
                 background: "green",
@@ -107,13 +151,20 @@ export default function CamerasPage() {
               title={item.name}
               position="below"
               actionIcon={
-                <IconButton
-                  sx={{ color: "red" }}
-                  aria-label={`${item.title}`}
-                  onClick={() => handleDeleteCamera(item.id)}
-                >
-                  <DeleteIcon />
-                </IconButton>
+                <div>
+                  <Switch
+                    onChange={() => toggleCamera(item)}
+                    edge="end"
+                    checked={item.isActive}
+                  />
+                  <IconButton
+                    sx={{ color: "red" }}
+                    aria-label={`${item.title}`}
+                    onClick={() => handleDeleteCamera(item.id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </div>
               }
               actionPosition="right"
             />
@@ -150,6 +201,14 @@ export default function CamerasPage() {
             noValidate
             sx={{ mt: 1 }}
           >
+            <p>
+              Image Ad
+              <Switch
+                onChange={() => setImageAd(!imageAd)}
+                edge="end"
+                checked={imageAd}
+              />
+            </p>
             <TextField
               autoFocus
               required
@@ -161,17 +220,21 @@ export default function CamerasPage() {
               fullWidth
               variant="outlined"
             />
-            <TextField
-              autoFocus
-              required
-              margin="dense"
-              id="link"
-              name="link"
-              type="url"
-              label="Camera feed link"
-              fullWidth
-              variant="outlined"
-            />
+            {!imageAd && (
+              <TextField
+                autoFocus
+                required={!imageAd}
+                margin="dense"
+                id="link"
+                name="link"
+                type="url"
+                label="Camera feed link"
+                fullWidth
+                variant="outlined"
+              />
+            )}
+
+            {imageAd && <input name="file" type="file" />}
           </Box>
         </DialogContent>
         <DialogActions>
