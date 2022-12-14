@@ -34,7 +34,7 @@ export default function NewsPage() {
         setNewsLinks((_links) => {
           const index = _links.indexOf(newsLink);
           const records = [..._links];
-          records[index] = newsLink;
+          records[index] = _newsLink;
           return records;
         });
       });

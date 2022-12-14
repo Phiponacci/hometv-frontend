@@ -1,87 +1,90 @@
-import * as React from "react";
+import * as React from 'react'
 
-import API_BASE_URL from "../../api";
-import Avatar from "@mui/material/Avatar";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import { Divider } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import Typography from "@mui/material/Typography";
-import WeatherElement from "./WeatherElement";
-import WeatherMetric from "./WeatherMetric";
+import API_BASE_URL from '../../api'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Grid from '@mui/material/Grid'
+import LocationOnIcon from '@mui/icons-material/LocationOn'
+import Typography from '@mui/material/Typography'
+import WeatherMetric from './WeatherMetric'
 
-const PERIOD = 5000;
+const PERIOD = 5000
+const UPDATE_RATE = 30 * 60 * 1000
 
 export default function WeatherWidget() {
-  const [weatherRecords, setWeatherRecords] = React.useState([]);
-  const [currentRecord, setCurrentRecord] = React.useState(null);
+  const [weatherRecords, setWeatherRecords] = React.useState([])
+  const [currentRecord, setCurrentRecord] = React.useState(null)
   React.useEffect(() => {
-    fetch(`${API_BASE_URL}/Weather/active`)
-      .then((res) => res.json())
-      .then((records) => setWeatherRecords(records))
-      .catch((_) => alert("❌ERROR: cannot fetch weather data!"));
-    return () => {};
-  }, []);
+    const fetchData = () => {
+      fetch(`${API_BASE_URL}/Weather/active`)
+        .then((res) => res.json())
+        .then((records) => setWeatherRecords(records))
+        .catch((_) => alert('ERROR: cannot fetch weather data!'))
+    }
+    fetchData()
+    const timer = setInterval(() => fetchData(), UPDATE_RATE)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
 
   React.useEffect(() => {
-    let index = 0;
+    let index = 0
     if (weatherRecords.length > 0) {
-      setCurrentRecord(weatherRecords[0]);
+      setCurrentRecord(weatherRecords[0])
     }
     const timer = setInterval(() => {
       if (weatherRecords.length > 0) {
-        const item = weatherRecords[++index % weatherRecords.length];
-        setCurrentRecord(item);
-        console.log(item);
+        const item = weatherRecords[++index % weatherRecords.length]
+        setCurrentRecord(item)
       }
-    }, PERIOD);
+    }, PERIOD)
     return () => {
-      clearInterval(timer);
-    };
-  }, [weatherRecords]);
+      clearInterval(timer)
+    }
+  }, [weatherRecords])
 
   const unixTimeToDate = (timestamp) => {
-    const date = new Date(timestamp * 1000);
+    const date = new Date(timestamp * 1000)
     // Hours part from the timestamp
-    const hours = date.getHours();
+    const hours = date.getHours()
     // Minutes part from the timestamp
-    const minutes = date.getMinutes();
-    return hours + ":" + minutes;
-  };
+    const minutes = date.getMinutes()
+    return hours + ':' + minutes
+  }
 
   return (
     <>
       {currentRecord && (
         <Card
           sx={{
-            my: 0.5,
-            backgroundColor: "#00C0E5",
-            paddingBottom: 1,
+            my: 2,
+            backgroundColor: '#00C0E5',
+            paddingBottom: 2,
           }}
         >
           <CardContent
             sx={{
-              p: 0.25,
-              "&:last-child": { pb: 0 },
+              p: 2,
+              '&:last-child': { pb: 0 },
             }}
           >
             <Grid container>
               <Grid item xs={6} sm={6} md={6}>
                 <Box
                   sx={{
-                    display: "flex",
-                    flexDirection: "row",
+                    display: 'flex',
+                    flexDirection: 'row',
                   }}
                 >
                   <LocationOnIcon
-                    style={{ color: "white", marginTop: 2, marginRight: "1%" }}
+                    style={{ color: 'white', marginTop: 2, marginRight: '1%' }}
                   />
                   <Typography
                     color="white"
-                    variant="subtitle1"
+                    variant="h6"
                     display="block"
                     gutterBottom
                   >
@@ -91,34 +94,39 @@ export default function WeatherWidget() {
 
                 <Box
                   sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
                   }}
                 >
-                  <Avatar
-                    src={`/weather/${currentRecord.weatherRecord.weather[0].icon}.svg`}
-                    variant="square"
-                    sx={{
-                      width: "50%",
-                      height: "50%",
-                    }}
-                  />
-                  <Typography color="white" display="block" gutterBottom>
-                    {currentRecord.weatherRecord.weather[0].main}
-                  </Typography>
+                  {currentRecord.weatherRecord.weather && (
+                    <>
+                      <Avatar
+                        src={`/weather/${currentRecord.weatherRecord.weather[0].icon}.svg`}
+                        variant="square"
+                        sx={{
+                          width: '50%',
+                          height: '50%',
+                        }}
+                      />
+                      <Typography color="white" display="block" gutterBottom>
+                        {currentRecord.weatherRecord.weather[0].main}
+                      </Typography>{' '}
+                    </>
+                  )}
+
                   <Box
                     sx={{
-                      display: "flex",
-                      marginLeft: "25%",
+                      display: 'flex',
+                      marginLeft: '25%',
                     }}
                   >
                     <Avatar
                       src="/thermometer.png"
                       variant="square"
                       sx={{
-                        width: "25%",
-                        height: "25%",
+                        width: '25%',
+                        height: '25%',
                       }}
                     />
                     <Typography color="white" variant="h5" display="block">
@@ -131,8 +139,8 @@ export default function WeatherWidget() {
               <Grid item xs={6} sm={6} md={6}>
                 <Box
                   sx={{
-                    display: "flex",
-                    flexDirection: "column",
+                    display: 'flex',
+                    flexDirection: 'column',
                   }}
                 >
                   <WeatherMetric
@@ -140,7 +148,7 @@ export default function WeatherWidget() {
                     title="sunrise"
                     value={unixTimeToDate(
                       currentRecord.weatherRecord.sys.sunrise +
-                        currentRecord.weatherRecord.timezone
+                        currentRecord.weatherRecord.timezone,
                     )}
                   />
                   <WeatherMetric
@@ -148,19 +156,19 @@ export default function WeatherWidget() {
                     title="sunset"
                     value={unixTimeToDate(
                       currentRecord.weatherRecord.sys.sunset +
-                        currentRecord.weatherRecord.timezone
+                        currentRecord.weatherRecord.timezone,
                     )}
                   />
                   <WeatherMetric
                     icon="/humidity.png"
-                    value={currentRecord.weatherRecord.main.humidity + "%"}
+                    value={currentRecord.weatherRecord.main.humidity + '%'}
                   />
                   <WeatherMetric
                     icon="/wind.png"
                     value={
                       Math.round(
-                        (currentRecord.weatherRecord.wind.speed * 18) / 5
-                      ) + " Km/h"
+                        (currentRecord.weatherRecord.wind.speed * 18) / 5,
+                      ) + ' Km/h'
                     }
                   />
                 </Box>
@@ -178,5 +186,5 @@ export default function WeatherWidget() {
         </Card>
       )}
     </>
-  );
+  )
 }

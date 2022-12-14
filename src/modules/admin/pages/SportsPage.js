@@ -1,73 +1,37 @@
 import * as React from "react";
 
 import API_BASE_URL from "../../api";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
 import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { ListItemButton } from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
 import Switch from "@mui/material/Switch";
-import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 
 export default function SportsPage() {
-  const [sportLinks, setSportLinks] = React.useState([]);
+  const [sports, setSports] = React.useState([]);
 
   React.useEffect(() => {
-    fetch(`${API_BASE_URL}/SportLink`)
+    fetch(`${API_BASE_URL}/sports`)
       .then((res) => res.json())
-      .then((_sportLinks) => setSportLinks(_sportLinks));
+      .then((_sportLinks) => setSports(_sportLinks));
     return () => {};
   }, []);
 
-  const toggleSportLink = (sportLink) => {
-    fetch(`${API_BASE_URL}/SportLink/${sportLink.id}`, {
+  const toggleSportLink = (sport) => {
+    fetch(`${API_BASE_URL}/sports/toggle/${sport.key}`, {
       method: "PUT",
     })
       .then((res) => res.json())
-      .then((_sportLink) => {
-        setSportLinks((_links) => {
-          const index = _links.indexOf(sportLink);
-          const records = [..._links];
-          records[index] = _sportLink;
+      .then((_sport) => {
+        setSports((_sports) => {
+          const index = _sports.indexOf(sport);
+          const records = [..._sports];
+          records[index] = _sport;
           return records;
         });
-      });
-  };
-
-  const handleAddLink = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const sportLink = {
-      name: data.get("name"),
-      link: data.get("link")
-    };
-    fetch(`${API_BASE_URL}/SportLink`, {
-      method: "POST",
-      headers: {
-        Accept: "text/plain",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(sportLink),
-    })
-      .then((res) => res.json())
-      .then((savedLink) => setSportLinks((current) => [savedLink, ...current]));
-  };
-
-  const handleDeleteLink = (sportLinkId) => {
-    fetch(`${API_BASE_URL}/SportLink/${sportLinkId}`, {
-      method: "DELETE",
-    })
-      .then((res) => res.json())
-      .then((deletedLink) => {
-        setSportLinks((current) =>
-          current.filter((sportLink) => sportLink.id !== deletedLink.id)
-        );
       });
   };
 
@@ -80,66 +44,26 @@ export default function SportsPage() {
         px={{ xs: 2, sm: 10, md: 25, lg: 40 }}
         sx={{ display: "block" }}
       >
-        <Box
-          id="camera-form"
-          component="form"
-          onSubmit={handleAddLink}
-          noValidate
-          sx={{ mt: 1 }}
-        >
-          <TextField
-            fullWidth
-            required
-            name="name"
-            id="outlined-basic"
-            label="Name"
-            variant="outlined"
-            sx={{
-              my: 1
-            }}
-          />
-          <TextField
-            fullWidth
-            required
-            name="link"
-            id="outlined-basic"
-            label="Sport link"
-            variant="outlined"
-            sx={{
-              my: 1
-            }}
-          />
-          <Grid container justifyContent="flex-end" sx={{ my: 2 }}>
-            <Button variant="contained" color="success" type="submit">
-              Save
-            </Button>
-          </Grid>
-        </Box>
+        
         <List
           display="flex"
           sx={{ width: "100%", bgcolor: "background.paper" }}
-          subheader={<ListSubheader>Sport Links</ListSubheader>}
+          subheader={<ListSubheader>Sports</ListSubheader>}
         >
-          {sportLinks.map((sportLink) => (
-            <ListItem key={sportLink.id}>
-              <ListItemButton href={sportLink.link} target="_blank">
-                <Tooltip title={sportLink.link}>
+          {sports.map((sport) => (
+            <ListItem key={sport.key}>
+              <ListItemButton>
+                <Tooltip title={sport.description}>
                   <ListItemText
-                    primary={sportLink.name}
+                    primary={sport.title}
                   />
                 </Tooltip>
               </ListItemButton>
               <Switch
-                onChange={() => toggleSportLink(sportLink)}
+                onChange={() => toggleSportLink(sport)}
                 edge="end"
-                checked={sportLink.isActive}
+                checked={sport.isActive}
               />
-              <IconButton
-                sx={{ color: "red" }}
-                onClick={() => handleDeleteLink(sportLink.id)}
-              >
-                <DeleteIcon />
-              </IconButton>
             </ListItem>
           ))}
         </List>

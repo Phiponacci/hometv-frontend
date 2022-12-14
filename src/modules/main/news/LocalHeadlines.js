@@ -1,81 +1,93 @@
-import * as React from "react";
+import * as React from 'react'
 
-import API_BASE_URL from "../../api";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import NewsTicker from "react-advanced-news-ticker";
-import dayjs from "dayjs";
+import API_BASE_URL from '../../api'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid'
+import NewsTicker from 'react-advanced-news-ticker'
 
-//import Avatar from "@mui/material/Avatar";
+const UPDATE_RATE = 30 * 60 * 1000
 
 function LocalHeadlines() {
-  const [news, setNews] = React.useState(null);
+  const [news, setNews] = React.useState(null)
   React.useEffect(() => {
-    const fetchPosts = async () => {
-      const url = `${API_BASE_URL}/LocalHeadline/active`;
-      fetch(url)
+    const fetchPosts = () => {
+      fetch(`${API_BASE_URL}/LocalHeadline/active`)
         .then((response) => response.json())
         .then((data) => setNews(data))
         .catch((error) =>
-          alert("Error fetching local headlines from the server!")
-        );
-    };
-    fetchPosts();
-    return () => {};
-  }, []);
+          alert('Error fetching local headlines from the server!'),
+        )
+    }
+    fetchPosts()
+    const timer = setInterval(() => {
+      fetchPosts()
+    }, UPDATE_RATE)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
   return (
     <>
-      <Box sx={{ flexGrow: 1, padding: 2 }}>
+      <Box sx={{ flexGrow: 1, margin: 0 }}>
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "row",
+            padding: 0,
+            display: 'flex',
+            flexDirection: 'row',
           }}
         >
-          <Grid>
-            
-          </Grid>
-
-          <Grid>
-            <h5
+          <Avatar
+            src="/logo.png"
+            variant="square"
+            sx={{ width: 45 * (4 / 3), height: 45, marginRight: 2 }}
+          />
+          <Grid
+            sx={{
+              padding: 0,
+            }}
+          >
+            <div
               style={{
-                color: "white",
-                marginBottom: 2,
+                color: 'white',
+                marginRight: 20,
+                padding: 0,
+                fontSize: '2rem',
+                fontWeight: 'bold',
               }}
             >
               Local Headlines
-            </h5>
+            </div>
             {news != null && (
               <NewsTicker
                 maxRows={1}
                 duration={5000}
                 style={{
-                  listStyleType: "none",
+                  margin: 0,
+                  minHeight: 30,
+                  listStyleType: 'none',
                   padding: 0,
                 }}
               >
                 {news.map((item) => (
                   <div key={item.id.toString()}>
-                    <h6
+                    <h4
                       className="hour"
                       style={{
-                        color: "white",
-                        display: "inline",
+                        color: 'white',
+                        display: 'inline',
                       }}
                     >
-                      {dayjs(item.headlineDateTime).format(
-                        "YYYY-MM-DD HH:mm:ss"
-                      )}{" "}
-                      |{" "}
-                    </h6>
-                    <h6
+                      {new Date(item.headlineDateTime).toDateString()} |{' '}
+                    </h4>
+                    <h4
                       style={{
-                        color: "white",
-                        display: "inline",
+                        color: 'white',
+                        display: 'inline',
                       }}
                     >
                       {item.headline}
-                    </h6>
+                    </h4>
                   </div>
                 ))}
               </NewsTicker>
@@ -84,7 +96,7 @@ function LocalHeadlines() {
         </Box>
       </Box>
     </>
-  );
+  )
 }
 
-export default LocalHeadlines;
+export default LocalHeadlines

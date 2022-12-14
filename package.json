@@ -16,8 +16,10 @@
     "react": "^18.2.0",
     "react-advanced-news-ticker": "^1.0.1",
     "react-dom": "^18.2.0",
+    "react-player": "^2.11.0",
     "react-router-dom": "^6.4.1",
     "react-scripts": "5.0.1",
+    "video.js": "^7.20.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

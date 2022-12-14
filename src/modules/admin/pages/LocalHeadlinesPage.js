@@ -92,7 +92,7 @@ export default function LocalHeadlinesPage() {
         sx={{ display: "block" }}
       >
         <Box
-          id="camera-form"
+          id="headlines-form"
           component="form"
           onSubmit={handleAddHeadline}
           noValidate

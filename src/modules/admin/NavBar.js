@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import ApiIcon from '@mui/icons-material/Api';
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
 import BottomNavigation from "@mui/material/BottomNavigation";
@@ -84,6 +85,13 @@ const NavBar = () => {
                     component={Link}
                     to="/admin/sports"
                   />
+                 
+                  <BottomNavigationAction
+                    label="API"
+                    icon={<ApiIcon />}
+                    component={Link}
+                    to="/admin/apis"
+                  />
                 </BottomNavigation>
               </Paper>
             </Box>
@@ -148,6 +156,15 @@ const NavBar = () => {
                 to="/admin/sports"
               >
                 Sports
+              </Button>
+              
+              <Button
+                startIcon={<ApiIcon />}
+                sx={{ m: 2, color: "white" }}
+                component={Link}
+                to="/admin/apis"
+              >
+                API
               </Button>
             </Box>
           </Toolbar>

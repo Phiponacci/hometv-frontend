@@ -7,11 +7,6 @@
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="my home tv app" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
@@ -41,6 +36,37 @@
     -->
     <title>Home TV</title>
   </head>
+
+  <style>
+    #right {
+      position: absolute;
+      left: 80%;
+      width: 20%;
+      background-color: #c69512;
+      height: 100%;
+    }
+    #bottom {
+      position: absolute;
+      top: 80%;
+      height: 20%;
+      width: 80%;
+      background-color: #c69512;
+    }
+
+    #news-bar {
+      color: white;
+      border-bottom: 40px solid #555;
+      border-left: 0px solid transparent;
+      border-right: 15px solid transparent;
+      height: 0;
+      position: relative;
+    }
+
+    body {
+      margin: 0;
+      background-color: transparent;
+    }
+  </style>
 
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

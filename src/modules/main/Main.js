@@ -3,11 +3,9 @@ import * as React from "react";
 import { Avatar } from "@mui/material";
 import Box from "@mui/material/Box";
 import Camera from "./camera/Camera";
-import Grid from "@mui/material/Grid";
 import Headlines from "./news/Headlines";
 import LocalHeadlines from "./news/LocalHeadlines";
-import Sports from "./sport/Sports";
-import Video from "./video/Video";
+import SportsWidget from "./sport/SportsWidget";
 import WeatherWidget from "./weather/WeatherWidget";
 
 function Main() {
@@ -23,31 +21,31 @@ function Main() {
     1000
   );
   return (
-    <Box sx={{ flexGrow: 1, padding: 2, backgroundColor: "#c69512" }}>
-      <Grid container spacing={{ xs: 0.5, md: 1 }}>
-        <Grid item xs={12} sm={7} md={9} xl={10}>
-          <Video />
-          <Headlines />
-          <LocalHeadlines />
-        </Grid>
+    <>
+      <Box id="bottom" sx={{ flexGrow: 1, p: 1, backgroundColor: "#c69512" }}>
+        <LocalHeadlines />
+        <Headlines />
+      </Box>
 
-        <Grid item xs={12} sm={5} md={3} xl={2}>
-          <div>
-            <Avatar
-              src="/logo-wide.png"
-              variant="square"
-              sx={{ width: 170, height: 70 }}
-            />
-            <h5 style={{
-              color: "white"
-            }}>{date}</h5>
-            <WeatherWidget />
-            <Camera />
-            <Sports />
-          </div>
-        </Grid>
-      </Grid>
-    </Box>
+      <Box id="right" sx={{ flexGrow: 1, py: 2, px: 1, backgroundColor: "#c69512" }}>
+        <Avatar
+          src="/logo-wide.png"
+          variant="square"
+          sx={{ width: 170, height: 70 }}
+        />
+        <h5
+          style={{
+            color: "white",
+            my:1,
+          }}
+        >
+          {date}
+        </h5>
+        <WeatherWidget />
+        <Camera />
+        <SportsWidget />
+      </Box>
+    </>
   );
 }
 

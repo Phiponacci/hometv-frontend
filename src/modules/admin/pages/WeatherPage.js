@@ -44,9 +44,9 @@ export default function WeatherPage() {
   const handleAddCity = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const coord = data.get("ll").split(", ");
-    const lat = coord[0];
-    const long = coord[1];
+    const coord = data.get("ll").split(",");
+    const lat = Number(coord[0]);
+    const long = Number(coord[1]);
     const city = {
       name: data.get("name"),
       latitude: lat,
